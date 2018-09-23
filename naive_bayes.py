@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.misc as smp
 import math
+from time import time
 from PIL import Image
 
 training_images_file = open('train-images.idx3-ubyte','rb')
@@ -48,6 +49,7 @@ testing_labels = np.array(testing_labels)
 testing_images[testing_images < 50] = 0
 testing_images[testing_images >= 50] = 1
 
+t0 = time()
 unique_elem, counts = np.unique(training_labels, return_counts = True)
 priors = np.append(unique_elem.reshape(10,1), counts.reshape(10,1), 1)
 
@@ -56,6 +58,8 @@ likelihoods = np.zeros((10, 784), dtype='int16')
 for row in range(training_images.shape[0]):
     mask = training_images[row] > 0
     likelihoods[training_labels[row], mask] += 1
+
+print("training time: " + str(round(time() - t0, 3)) + "s")
 
 def classify(image, priors, likelihoods):
     max_pros_class = (-1E6, -1)
@@ -75,10 +79,17 @@ def classify(image, priors, likelihoods):
 
     return max_pros_class
 
+image = 0
+t1 = time()
+classify(testing_images[image], priors, likelihoods)[1]
+print("prediction time for 1 image: " + str(round(time() - t1, 3)) + "s")
+print("predicted label: " + str(classify(testing_images[image], priors, likelihoods)[1]) + " | correct label: " + str(testing_labels[image]))
 correct = 0
+
+t2 = time()
 for image in range(10000):
-    print(str(classify(testing_images[image], priors, likelihoods)[1]) + " vs " + str(testing_labels[image]))
     if classify(testing_images[image], priors, likelihoods)[1] == testing_labels[image]:
         correct += 1
-print(correct)
-print(str(correct/10000))
+
+print("prediction time for 10000 images: " + str(round(time() - t2, 3)) + "s")
+print("accuracy: " + str(correct/10000.))
