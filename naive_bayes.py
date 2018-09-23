@@ -14,3 +14,6 @@ training_images = np.array(training_images).reshape(60000, 784)
 
 img = Image.fromarray(training_images[5].reshape((28,28)))
 img.show()
+
+training_images[training_images < 30] = 0
+training_images[training_images > 30] = 1
