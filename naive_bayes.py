@@ -66,16 +66,15 @@ def classify(image, priors, likelihoods):
         log_prior = math.log(priors[c][1])
         pros = log_prior
         n = float(np.sum(likelihoods[c]))
-        for pixel in range(28 * 28):
-            if image[pixel] == 1:
-                if likelihoods[c][pixel] == 0:
-                    likelihoods[c][pixel] = 1
-                log_likelihood = math.log(likelihoods[c][pixel]/n)
-                pros = pros + log_likelihood
-        
+        activated_pixels = np.where(image == 1)
+        p_llh = likelihoods[c][activated_pixels]
+        p_llh[p_llh == 0] = 1
+        for pixel_likelihood in p_llh:
+            log_likelihood = math.log(pixel_likelihood/n)
+            pros = pros + log_likelihood
+
         if pros > max_pros_class[0]:
             max_pros_class = (pros, c)
-
     return max_pros_class
 
 image = 0
@@ -91,4 +90,4 @@ for image in range(10000):
         correct += 1
 
 print("prediction time for 10000 images: " + str(round(time() - t2, 3)) + "s")
-print("accuracy: " + str(correct/10000.))
+print("Accuracy: " + str(correct/10000.))
