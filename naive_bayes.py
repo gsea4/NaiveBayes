@@ -22,7 +22,6 @@ training_labels = training_labels[8:]
 training_images = np.array(training_images).reshape(60000, 784)
 training_labels = np.array(training_labels)
 
-
 # img = Image.fromarray(training_images[5].reshape((28,28)))
 # img.show()
 
